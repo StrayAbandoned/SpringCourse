@@ -45,7 +45,7 @@ public class MyHttpServlet extends HttpServlet {
             for (Product product : productStorage.findAll()) {
                 writer.println("<tr>");
                 writer.println(String.format("<td>%d</td>", product.getId()));
-                writer.println(String.format("<td>%s</td>", product.getTitle()));
+                writer.println(String.format("<td><a href = \"%s/product/%d\">%s</a></td>", req.getContextPath(), product.getId(), product.getTitle()));
                 writer.println(String.format("<td>%d</td>", product.getCost()));
                 writer.println("</tr>");
             }

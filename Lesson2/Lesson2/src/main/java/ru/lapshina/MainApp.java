@@ -47,6 +47,9 @@ public class MainApp {
                             System.out.println("Ваша корзина:");
                             cart.show();
                         }
+                        else {
+                            System.out.println("Товара с таким id нет в вашей корзине");
+                        }
                     }
                     break;
                 case "END":

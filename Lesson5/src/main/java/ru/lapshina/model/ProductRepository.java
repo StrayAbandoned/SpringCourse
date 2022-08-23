@@ -13,8 +13,6 @@ import java.util.List;
 public class ProductRepository {
     EntityManagerFactory factory;
     EntityManager manager;
-//    SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Product.class).buildSessionFactory();
-//    Session session = sessionFactory.getCurrentSession();
 
 
     public ProductRepository() {

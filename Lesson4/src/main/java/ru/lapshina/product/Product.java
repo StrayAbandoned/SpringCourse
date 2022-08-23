@@ -1,6 +1,7 @@
 package ru.lapshina.product;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -9,10 +10,10 @@ import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.Locale;
 
-@Component
-@Scope("prototype")
+
 @Getter
 @Setter
+@NoArgsConstructor
 public class Product {
 
     private Integer id;
@@ -21,9 +22,6 @@ public class Product {
 
     @Positive(message = "Cost must be more than zero")
     private int cost;
-    @NotBlank(message = "Field mustn't be empty")
-    private  String description;
-
 
 
     public Product(String title, int cost) {

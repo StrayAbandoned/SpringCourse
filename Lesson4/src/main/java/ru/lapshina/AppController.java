@@ -2,13 +2,12 @@ package ru.lapshina;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import ru.lapshina.exception.EntityNotFoundException;
 import ru.lapshina.product.Product;
 import ru.lapshina.product.ProductRepository;
 
@@ -30,7 +29,7 @@ public class AppController {
 
     @GetMapping("/{id}")
     public String showForm(@PathVariable int id, Model model) {
-        model.addAttribute("product", productRepository.findById(id));
+        model.addAttribute("product", productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found")));
         return "product_form";
     }
 
@@ -54,11 +53,19 @@ public class AppController {
         return "redirect:/products/" + p.getId();
     }
 
-    @GetMapping("/{id}/delete")
-    public String deleteProduct(@PathVariable int id) {
+    @DeleteMapping("/{id}")
+    public String deleteProduct(@RequestBody @PathVariable int id) {
         productRepository.delete(id);
         return "redirect:/products";
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String notFoundExceptionHandler(Model model, EntityNotFoundException e) {
+        model.addAttribute("message", e.getMessage());
+        return "not_found";
+    }
+
 
 
 }

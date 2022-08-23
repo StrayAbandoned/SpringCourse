@@ -4,6 +4,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -17,8 +18,9 @@ public class ProductRepository implements Repository{
         return new ArrayList<>(products.values());
     }
 
-    public Product findById(int id) {
-        return products.get(id);
+    public Optional<Product> findById(int id) {
+
+        return Optional.ofNullable(products.get(id));
     }
 
     public void insert(Product product) {

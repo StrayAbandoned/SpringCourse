@@ -3,24 +3,32 @@ package ru.lapshina.product;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import lombok.ToString;
 
+
+import javax.persistence.*;
 import javax.validation.constraints.*;
-import java.time.LocalDate;
-import java.util.Locale;
+
 
 
 @Getter
 @Setter
 @NoArgsConstructor
+@Entity
+@Table(name = "products")
+@ToString
 public class Product {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
-    @NotBlank(message = "Field mustn't be empty")
+
+    @Column(name = "title", nullable = false, unique = true)
     private String title;
 
-    @Positive(message = "Cost must be more than zero")
+
+    @Column(name = "cost", nullable = false)
     private int cost;
 
 

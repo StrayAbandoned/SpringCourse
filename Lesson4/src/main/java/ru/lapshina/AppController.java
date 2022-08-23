@@ -13,6 +13,7 @@ import ru.lapshina.product.ProductRepository;
 
 import javax.validation.Valid;
 
+@Slf4j
 @Controller
 @RequestMapping("/products")
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class AppController {
 
     @GetMapping("/{id}")
     public String showForm(@PathVariable int id, Model model) {
-        model.addAttribute("product", productRepository.findById(id));
+        model.addAttribute("product", productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found")));
         return "product_form";
     }
 
@@ -39,7 +40,8 @@ public class AppController {
             return "product_form";
         }
 
-        productRepository.insert(product);
+
+        productRepository.save(product);
         return "redirect:/products";
 
     }

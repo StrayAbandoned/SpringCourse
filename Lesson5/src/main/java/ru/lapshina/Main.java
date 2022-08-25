@@ -13,6 +13,7 @@ public class Main {
 
         //провера метода вставки значения в таблицу
         repository.insertOrUpdate(new Product("Kiwi",300));
+        repository.insertOrUpdate(new Product("Banana",180));
         System.out.println("*********************************************************");
 
         //вывод на экран всех товаров в таблице
@@ -22,11 +23,14 @@ public class Main {
 
 
         //проверка удаления и вывод на экран, чтобы убедиться, что товар был действительно удален из таблицы
-        repository.delete(repository.findById(1));
+        repository.delete(1);
         System.out.println(repository.findAll());
         System.out.println("*********************************************************");
 
         //поиск товара по id
-        System.out.println(repository.findById(2));
+        System.out.println(repository.findById(3));
+
+        repository.close();
     }
+
 }

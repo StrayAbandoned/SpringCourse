@@ -43,8 +43,8 @@ public class ProductRepository {
         manager.getTransaction().begin();
         List<Product> p = manager.createQuery("from Product where title = '" + product.getTitle()+"'").getResultList();
         if(p.size()!=0){
-            Product p1 = manager.find(Product.class, p.get(0).getId());
-            p1.setCost(product.getCost());
+            product.setId(p.get(0).getId());
+            manager.merge(product);
         } else {
             manager.persist(product);
         }
@@ -60,15 +60,16 @@ public class ProductRepository {
             if(p0.size()==0){
                 manager.persist(p);
             } else {
-                Product p1 = manager.find(Product.class, p0.get(0).getId());
-                p1.setCost(p.getCost());
+                p.setId(p0.get(0).getId());
+                manager.merge(p);;
             }
         }
         manager.getTransaction().commit();
     }
 
-    public void delete(Product product) {
+    public void delete(int id) {
         manager.getTransaction().begin();
+        Product product = manager.find(Product.class,1);
         if(product!=null){
             manager.remove(product);
         }

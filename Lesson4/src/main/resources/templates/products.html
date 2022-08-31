@@ -38,6 +38,22 @@
             <a class="btn btn-primary" th:href="@{/products/new}">Add Product</a>
         </div>
 
+        <div class="col-12 mt-3">
+            <form class="form-inline">
+                <div class="form-group mb-2 mr-2">
+                    <label for="minCost" class="sr-only">Min cost</label>
+                    <input type="text" class="form-control" id="minCost"
+                           name="minCost" placeholder="minCost">
+                </div>
+                <div class="form-group mb-2 mr-2">
+                    <label for="maxCost" class="sr-only">Max cost</label>
+                    <input type="text" class="form-control" id="maxCost"
+                           name="maxCost" placeholder="maxCost">
+                </div>
+                <button type="submit" class="btn btn-primary mb-2">Apply</button>
+            </form>
+        </div>
+
         <div class="col-12">
             <table class="table table-bordered my-2">
                 <thead>
@@ -56,8 +72,8 @@
                     <td>
                         <a class="btn btn-success" th:href="@{/products/{id}(id = ${products.id})}"><i
                                 class="fas fa-edit"></i></a>
-<!--                        <a class="btn btn-danger" th:href="@{/products/{id}/delete(id = ${products.id})}"><i-->
-<!--                                class="far fa-trash-alt"></i></a>-->
+                        <!--                        <a class="btn btn-danger" th:href="@{/products/{id}/delete(id = ${products.id})}"><i-->
+                        <!--                                class="far fa-trash-alt"></i></a>-->
                         <form class="d-inline" th:method="delete" th:action="@{/products/{id}(id = ${products.id})}">
                             <button class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
 

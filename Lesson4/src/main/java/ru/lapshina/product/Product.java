@@ -22,20 +22,12 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "title", nullable = false, unique = true)
     private String title;
 
-
     @Column(name = "cost", nullable = false)
-    private int cost;
-
-
-    public Product(String title, int cost) {
-        this.title = title;
-        this.cost = cost;
-    }
-
+    private Long cost;
 
 }

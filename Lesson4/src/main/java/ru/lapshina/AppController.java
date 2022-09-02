@@ -1,66 +1,75 @@
 package ru.lapshina;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.lapshina.exception.EntityNotFoundException;
-import ru.lapshina.product.Product;
-import ru.lapshina.product.ProductRepository;
+import ru.lapshina.product.ProductDto;
+import ru.lapshina.service.ProductService;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/products")
 @RequiredArgsConstructor
 public class AppController {
 
-    private final ProductRepository productRepository;
+    private final ProductService service;
 
     @GetMapping
-    public String showPage(@RequestParam(required = false) Long minCost, @RequestParam(required = false) Long maxCost, Model model) {
-        if (minCost == null && maxCost == null) {
-            model.addAttribute("productRepository", productRepository.findAll());
-        }
-        if (minCost != null && maxCost == null) {
-            model.addAttribute("productRepository", productRepository.findAllByCostIsGreaterThanEqual(minCost));
-        }
-        if (minCost == null && maxCost != null) {
-            model.addAttribute("productRepository", productRepository.findAllByCostIsLessThanEqual(maxCost));
-        }
-        if (minCost != null && maxCost != null) {
-            model.addAttribute("productRepository", productRepository.betweenCostFilter(minCost,maxCost));
+    public String showAll(@RequestParam(name = "minCost", required = false) Long minCost,
+                          @RequestParam(name = "maxCost", required = false) Long maxCost,
+                          @RequestParam("page") Optional<Integer> page,
+                          @RequestParam("size") Optional<Integer> size,
+                          Model model) {
+        int currentPage = page.orElse(1);
+        int pageSize = size.orElse(10);
+        Page<ProductDto> productPage = service.findPaginated(PageRequest.of(currentPage - 1, pageSize), minCost, maxCost);
+        model.addAttribute("productPage", productPage);
+        int totalPages = productPage.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
         }
         return "products";
     }
 
     @GetMapping("/{id}")
     public String showForm(@PathVariable Long id, Model model) {
-        model.addAttribute("product", productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product not found")));
+        model.addAttribute("product", service.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found")));
         return "product_form";
     }
 
     @PostMapping()
-    public String changeProduct(@Valid Product product, BindingResult bindingResult) {
+    public String changeProduct(@Valid @ModelAttribute("product") ProductDto productDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "product_form";
         }
-        productRepository.save(product);
+        service.save(productDto);
         return "redirect:/products";
     }
 
     @GetMapping("/new")
     public String showForm(Model model) {
-        model.addAttribute("product", new Product());
+        model.addAttribute("product", new ProductDto());
         return "product_form";
     }
 
     @DeleteMapping("/{id}")
     public String deleteProduct(@PathVariable Long id) {
-        productRepository.deleteById(id);
+        service.delete(id);
         return "redirect:/products";
     }
 
@@ -70,6 +79,5 @@ public class AppController {
         model.addAttribute("message", e.getMessage());
         return "not_found";
     }
-
 
 }

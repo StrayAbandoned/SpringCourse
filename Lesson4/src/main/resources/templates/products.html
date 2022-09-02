@@ -65,15 +65,13 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="products : ${productRepository}">
+                <tr th:each="products : ${productPage.content}">
                     <th scope="row" th:text="${products.id}">1</th>
                     <td th:text="${products.title}">Bread</td>
                     <td th:text="${products.cost}">50</td>
                     <td>
                         <a class="btn btn-success" th:href="@{/products/{id}(id = ${products.id})}"><i
                                 class="fas fa-edit"></i></a>
-                        <!--                        <a class="btn btn-danger" th:href="@{/products/{id}/delete(id = ${products.id})}"><i-->
-                        <!--                                class="far fa-trash-alt"></i></a>-->
                         <form class="d-inline" th:method="delete" th:action="@{/products/{id}(id = ${products.id})}">
                             <button class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
 
@@ -82,6 +80,13 @@
                 </tr>
                 </tbody>
             </table>
+        </div>
+
+        <div th:if="${productPage.totalPages > 0}" class="pagination"
+             th:each="pageNumber : ${pageNumbers}">
+            <a th:href="@{/products(size=${productPage.size}, page=${pageNumber})}"
+               th:text=${pageNumber}
+               th:class="${pageNumber==productPage.number + 1} ? active"></a>
         </div>
     </div>
 </div>

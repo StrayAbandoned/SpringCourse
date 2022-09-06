@@ -40,6 +40,19 @@ public class ProductService {
         repository.deleteById(id);
     }
 
+    public List<ProductDto> showAll(Long minCost, Long maxCost) {
+        QProduct product = QProduct.product;
+        BooleanBuilder predicate = new BooleanBuilder();
+        if (minCost != null) {
+            predicate.and(product.cost.goe(minCost));
+        }
+        if (maxCost != null) {
+            predicate.and(product.cost.loe(maxCost));
+        }
+        return StreamSupport.stream(repository.findAll(predicate).spliterator(), true)
+                .map(mapper::mapToProductDto).toList();
+    }
+
     public Page<ProductDto> findPaginated(Pageable pageable, Long minCost, Long maxCost) {
         QProduct product = QProduct.product;
         BooleanBuilder predicate = new BooleanBuilder();

@@ -31,17 +31,10 @@ public class AppController {
                           @RequestParam("page") Optional<Integer> page,
                           @RequestParam("size") Optional<Integer> size,
                           Model model) {
-        int currentPage = page.orElse(1);
+        int currentPage = page.orElse(1)-1;
         int pageSize = size.orElse(10);
-        Page<ProductDto> productPage = service.findPaginated(PageRequest.of(currentPage - 1, pageSize), minCost, maxCost);
-        model.addAttribute("productPage", productPage);
-        int totalPages = productPage.getTotalPages();
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-                    .boxed()
-                    .collect(Collectors.toList());
-            model.addAttribute("pageNumbers", pageNumbers);
-        }
+        Page<ProductDto> productPage = service.findPaginated(currentPage, pageSize, minCost, maxCost);
+        model.addAttribute("products", productPage);
         return "products";
     }
 

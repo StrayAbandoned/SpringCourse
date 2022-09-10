@@ -53,7 +53,7 @@ public class ProductService {
                 .map(mapper::mapToProductDto).toList();
     }
 
-    public Page<ProductDto> findPaginated(Pageable pageable, Long minCost, Long maxCost) {
+    public Page<ProductDto> findPaginated(int page, int size, Long minCost, Long maxCost) {
         QProduct product = QProduct.product;
         BooleanBuilder predicate = new BooleanBuilder();
         if (minCost != null) {
@@ -62,22 +62,7 @@ public class ProductService {
         if (maxCost != null) {
             predicate.and(product.cost.loe(maxCost));
         }
-        int pageSize = pageable.getPageSize();
-        int currentPage = pageable.getPageNumber();
-        int startItem = currentPage * pageSize;
-        List<ProductDto> list;
-
-        if (repository.count() < startItem) {
-            list = Collections.emptyList();
-        } else {
-            int toIndex = Math.min(startItem + pageSize, (int) repository.count(predicate));
-            list = StreamSupport.stream(repository.findAll(predicate).spliterator(), true)
-                    .map(mapper::mapToProductDto).toList().subList(startItem, toIndex);
-        }
-
-        Page<ProductDto> productPage
-                = new PageImpl<>(list, PageRequest.of(currentPage, pageSize), repository.count(predicate));
-        return productPage;
+        return repository.findAll(predicate, PageRequest.of(page, size)).map(mapper::mapToProductDto);
     }
 
 

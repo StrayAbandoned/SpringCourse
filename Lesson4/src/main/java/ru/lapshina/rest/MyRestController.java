@@ -1,6 +1,8 @@
 package ru.lapshina.rest;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import ru.lapshina.exception.EntityNotFoundException;
 import ru.lapshina.product.ProductDto;
@@ -8,19 +10,25 @@ import ru.lapshina.service.ProductService;
 
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
+@Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/v1/products")
+@RequestMapping("/api/v1/products")
 public class MyRestController {
 
     private final ProductService service;
 
     @GetMapping
-    public List<ProductDto> showAll(@RequestParam(name = "minCost", required = false) Long minCost,
-                          @RequestParam(name = "maxCost", required = false) Long maxCost) {
-        List <ProductDto> product = service.showAll(minCost, maxCost);
+    public Page<ProductDto> showAll(@RequestParam(name = "minCost", required = false) Long minCost,
+                                    @RequestParam(name = "maxCost", required = false) Long maxCost,
+                                    @RequestParam("page") Optional<Integer> page,
+                                    @RequestParam("size") Optional<Integer> size) {
+        int currentPage = page.orElse(1)-1;
+        int pageSize = size.orElse(10);
+        Page<ProductDto> product = service.findPaginated(currentPage, pageSize, minCost, maxCost);
         return product;
     }
 

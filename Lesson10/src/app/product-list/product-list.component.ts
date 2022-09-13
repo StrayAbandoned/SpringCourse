@@ -20,11 +20,12 @@ export class ProductListComponent implements OnInit {
       console.log(error);
     })
   }
-  delete(id: number|null){
+
+
+  delete(id: number|null) {
     if(id!=null){
       this.productService.delete(id);
     }
 
   }
-
 }

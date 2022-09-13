@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Page} from "../model/page";
+import {Product} from "../model/product";
 
 @Component({
   selector: 'app-product-service',
@@ -17,8 +18,14 @@ export class ProductServiceComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  public delete(id: number){
-    return this.http.delete("/api/v1/products/"+id);
+  public findById(id: number){
+    return this.http.get<Product>("/api/v1/products/"+id);
+  }
+  public save(product: Product){
+    return this.http.put<Product>('/api/v1/products', product);
   }
 
+  delete(id: number) {
+    return this.http.delete<Product>("/api/v1/products"+id)
+  }
 }

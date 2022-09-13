@@ -39,10 +39,15 @@ public class MyRestController {
         return productDto;
     }
 
-    @PostMapping()
+    @PutMapping
+    public ProductDto updateProduct(@RequestBody ProductDto productDto) {
+        service.save(productDto);
+        return productDto;
+    }
+    @PostMapping
     public ProductDto saveProduct(@RequestBody ProductDto productDto) {
         if (productDto.getId() != null) {
-            throw new IllegalArgumentException("Created user shouldn't have id");
+            throw new IllegalArgumentException("Created product shouldn't have id");
         }
         service.save(productDto);
         return productDto;

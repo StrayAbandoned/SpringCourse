@@ -1,8 +1,8 @@
-package ru.lapshina;
+package ru.lapshina.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,14 +13,12 @@ import ru.lapshina.product.ProductDto;
 import ru.lapshina.service.ProductService;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/products")
 @RequiredArgsConstructor
+@Slf4j
 public class AppController {
 
     private final ProductService service;
@@ -65,6 +63,7 @@ public class AppController {
         service.delete(id);
         return "redirect:/products";
     }
+
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)

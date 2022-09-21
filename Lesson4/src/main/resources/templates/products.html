@@ -13,13 +13,14 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"/>
+    <link rel=”stylesheet” href=”https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css”>
     <title>EShop application</title>
 </head>
 
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">EShop</a>
+    <a class="navbar-brand" th:href="@{/products}">EShop</a>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,14 +30,14 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">List</a>
+                <a class="nav-link" th:href="@{/products/cart}" sec:authorize="hasAnyRole('CUSTOMER')"
+                   value="Cart">Cart</a>
             </li>
         </ul>
         <form sec:authorize="isAuthenticated()"
               th:action="@{/logout}"
               th:method="post"
-              class="form-inline my-2 my-lg-0"
-        >
+              class="form-inline my-2 my-lg-0">
             <button class="btn btn-outline-success my-2 my-sm-0">
                 Logout <span sec:authentication="principal.username"></span>
             </button>
@@ -47,7 +48,7 @@
 
 <div class="container">
     <div class="row py-2">
-        <div class="col-12">
+        <div class="col-12" sec:authorize="hasAnyRole('ADMIN')">
             <a class="btn btn-primary" th:href="@{/products/new}">Add Product</a>
         </div>
 
@@ -83,12 +84,20 @@
                     <td th:text="${product.title}">Bread</td>
                     <td th:text="${product.cost}">50</td>
                     <td>
-                        <a class="btn btn-success" th:href="@{/products/{id}(id = ${product.id})}"><i
+                        <a sec:authorize="hasAnyRole('ADMIN')" class="btn btn-success"
+                           th:href="@{/products/{id}(id = ${product.id})}"><i
                                 class="fas fa-edit"></i></a>
-                        <form class="d-inline" th:method="delete" th:action="@{/products/{id}(id = ${product.id})}">
+                        <form sec:authorize="hasAnyRole('ADMIN')" class="d-inline" th:method="delete"
+                              th:action="@{/products/{id}(id = ${product.id})}">
                             <button class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
-
                         </form>
+                        <a sec:authorize="hasAnyRole('CUSTOMER')"
+                           th:href="@{/products/cart/add/{id}(id = ${product.id})}"
+                           class="btn btn-success"
+                           data-toggle="tooltip" data-placement="top" title="Add to cart">ADD
+                        </a>
+
+
                     </td>
                 </tr>
                 </tbody>
@@ -101,7 +110,8 @@
                     <li class="page-item" th:classappend="${products.isFirst()} ? 'disabled'">
                         <a class="page-link" th:href="@{/products(page=${products.number}, size=${products.size})}">Previous</a>
                     </li>
-                    <li th:each="pages : ${#numbers.sequence(1, products.totalPages)}" th:classappend="${pages == products.number+1} ? 'active'" class="page-item">
+                    <li th:each="pages : ${#numbers.sequence(1, products.totalPages)}"
+                        th:classappend="${pages == products.number+1} ? 'active'" class="page-item">
                         <a class="page-link" th:href="@{/products(page=${pages}, size=${products.size})}">[[${pages}]]
                             <span th:if="${pages == products.number+1}" class="sr-only">(current)</span>
                         </a>

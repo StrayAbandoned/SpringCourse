@@ -4,18 +4,18 @@ import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.lapshina.product.ProductDto;
 import ru.lapshina.product.ProductRepository;
 import ru.lapshina.product.QProduct;
 import ru.lapshina.product.mapper.ProductMapperImpl;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
@@ -23,6 +23,7 @@ import java.util.stream.StreamSupport;
 @Setter
 @AllArgsConstructor
 @Service
+@Slf4j
 public class ProductService {
 
     private final ProductRepository repository;
@@ -66,5 +67,31 @@ public class ProductService {
     }
 
 
+    public void addToCart(String name, Long id) {
+        Integer count = Optional.ofNullable(repository.getCountOfProducts(name, id)).orElse(0);
+        log.info(String.valueOf(count));
+        if(count==0){
+            log.info("addedtocart");
+            repository.addToCart(name, id);
+        } else{
+            count++;
+            log.info("updatedtocart");
+            repository.addToCart(name, id, count);
+        }
+    }
+
+    public Map<ProductDto, Integer> showCart(String currentUserName) {
+        Map<ProductDto, Integer> products = new HashMap<>();
+        List<ProductDto> listProduct= StreamSupport.stream(repository.getListOfProducts(currentUserName).spliterator(), true)
+                .map(mapper::mapToProductDto).toList();
+        for(ProductDto p: listProduct){
+            products.put(p, repository.getCountOfProducts(currentUserName, p.getId()));
+        }
+        return products;
+    }
+
+    public void removeFromCart(String currentUserName, Long id) {
+        repository.removeFromCart(currentUserName, id);
+    }
 }
 
